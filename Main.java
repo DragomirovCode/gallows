@@ -1,23 +1,27 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) {
-        String[] wordAndDescription = wordStorage();
+    private static int attemptsLeft;
 
-        System.out.println("Случайное слово: " + wordAndDescription[0]);
-        System.out.println("Описание: " + wordAndDescription[1]);
+    private static Set<Character> guessedLetters;
+
+    private static String secretWord;
+
+    private static String wordDescription;
+
+
+    public static void main(String[] args) {
+        startGame();
     }
 
     public static String[] wordStorage(){
         // Создаем HashMap для хранения слов и их описаний
         HashMap<String, String> wordDescriptionMap = new HashMap<>();
         // Заполняем HashMap словами и их описаниями
-        wordDescriptionMap.put("слово1", "Описание слова 1");
-        wordDescriptionMap.put("слово2", "Описание слова 2");
-        wordDescriptionMap.put("слово3", "Описание слова 3");
+        wordDescriptionMap.put("один", "Описание слова 1");
+        wordDescriptionMap.put("два", "Описание слова 2");
+        wordDescriptionMap.put("три", "Описание слова 3");
         return getRandomWord(wordDescriptionMap);
     }
 
@@ -29,14 +33,81 @@ public class Main {
         int index = random.nextInt(wordList.size());
         String randomWord = wordList.get(index);
         String description = wordDescriptionMap.get(randomWord);
-
         // Создаем массив, содержащий случайное слово и его описание
         String[] wordAndDescription = {randomWord, description};
         return wordAndDescription;
     }
 
-    public static void attemptTracker(){}
+    public static HashMap<Character, ArrayList<Integer>> wordConceal(){
+        HashMap<Character, ArrayList<Integer>> letterPositions = new HashMap<>();
+        for(int i = 0; i < secretWord.length(); i++){
+            char letter = secretWord.charAt(i);
+            if(letterPositions.containsKey(letter)){
+                letterPositions.get(letter).add(i);
+            } else {
+                ArrayList<Integer> positions = new ArrayList<>();
+                positions.add(i);
+                letterPositions.put(letter, positions);
+            }
+        }
+        return letterPositions;
+    }
 
-    public static void riddleContainer(){}
+    private static void initializeGame() {
+        String[] wordAndDescription = wordStorage();
+        secretWord = wordAndDescription[0]; // само слово
+        wordDescription = wordAndDescription[1]; // описание слова
+        wordEncryption(); // шифр
+        attemptsLeft = 5; // Установите желаемое количество попыток
+        guessedLetters = new HashSet<>(); //
+    }
 
+    public static void wordEncryption(){
+        StringBuilder encryptedWord = new StringBuilder();
+        for (int i = 0; i < secretWord.length(); i++) {
+            encryptedWord.append("*");
+        }
+        System.out.println(wordDescription + " Шифр: " + encryptedWord);
+    }
+
+    public static void startGame(){
+        initializeGame();
+        System.out.println("Добро пожаловать в игру 'Виселица'!'");
+        Scanner tryingToGuessTheWord = new Scanner(System.in);
+        while(attemptsLeft > 0){
+            System.out.println("У вас есть " + attemptsLeft + " попыток отгадать слово");
+            char guess = tryingToGuessTheWord.next().charAt(0);
+            if(!Character.isLetter(guess)){
+                System.out.println("Пожалуйста, введите букву");
+                continue;
+            }
+            if(guessedLetters.contains(guess)){
+                System.out.println("Вы уже вводили эту букву, попробуйте другую");
+                continue;
+            }else{
+                guessedLetters.add(guess);
+            }
+            if (wordConceal().containsKey(guess)){
+                System.out.println("буква есть");
+            }else{
+                System.out.println("буквы нет");
+                attemptsLeft--;
+            }
+            if(isWordGuessed()){
+                System.out.println("Поздравляем! Вы отгадали слово: " + secretWord);
+                break;
+            }
+            if(attemptsLeft == 0){
+                System.out.println("Извините, вы проиграли. Загаданное слово было: " + secretWord);
+            }
+        }
+    }
+    public static boolean isWordGuessed(){
+        for(int i = 0; i < secretWord.length(); i++){
+            if(!guessedLetters.contains(secretWord.charAt(i))){
+               return false;
+            }
+        }
+        return true;
+    }
 }
