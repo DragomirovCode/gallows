@@ -10,6 +10,16 @@ public class Main {
 
     private static String wordDescription;
 
+    public static char guess;
+
+    public static int counter = 0;
+
+    public static String encryptedWord;
+
+    static {
+        initializeGame();
+        encryptedWord = wordEncryption().toString();
+    }
 
     public static void main(String[] args) {
         startGame();
@@ -53,30 +63,38 @@ public class Main {
         return letterPositions;
     }
 
+    public static String revealWord(String encryptedWord, char character, int index){
+        char[] chars = encryptedWord.toCharArray();
+        chars[index] = character;
+        return new String(chars);
+    }
+
     private static void initializeGame() {
         String[] wordAndDescription = wordStorage();
         secretWord = wordAndDescription[0]; // само слово
         wordDescription = wordAndDescription[1]; // описание слова
         wordEncryption(); // шифр
         attemptsLeft = 5; // Установите желаемое количество попыток
-        guessedLetters = new HashSet<>(); //
+        guessedLetters = new HashSet<>(); // хранилище для букв, которые были введены пользователем
     }
 
-    public static void wordEncryption(){
+    public static StringBuilder wordEncryption(){
         StringBuilder encryptedWord = new StringBuilder();
         for (int i = 0; i < secretWord.length(); i++) {
             encryptedWord.append("*");
         }
-        System.out.println(wordDescription + " Шифр: " + encryptedWord);
+        return encryptedWord;
     }
 
     public static void startGame(){
         initializeGame();
         System.out.println("Добро пожаловать в игру 'Виселица'!'");
         Scanner tryingToGuessTheWord = new Scanner(System.in);
+        System.out.println(wordEncryption());
         while(attemptsLeft > 0){
             System.out.println("У вас есть " + attemptsLeft + " попыток отгадать слово");
-            char guess = tryingToGuessTheWord.next().charAt(0);
+            System.out.println(wordDescription);
+            guess = tryingToGuessTheWord.next().charAt(0);
             if(!Character.isLetter(guess)){
                 System.out.println("Пожалуйста, введите букву");
                 continue;
@@ -89,6 +107,12 @@ public class Main {
             }
             if (wordConceal().containsKey(guess)){
                 System.out.println("буква есть");
+                for(; counter < encryptedWord.length();){
+                    encryptedWord = revealWord(encryptedWord, secretWord.charAt(counter),counter);
+                    System.out.println(encryptedWord);
+                    break;
+                }
+                counter++;
             }else{
                 System.out.println("буквы нет");
                 attemptsLeft--;
