@@ -17,9 +17,16 @@ public class Main {
         // Создаем HashMap для хранения слов и их описаний
         HashMap<String, String> wordDescriptionMap = new HashMap<>();
         // Заполняем HashMap словами и их описаниями
-        wordDescriptionMap.put("одино", "Описание слова 1");
-        wordDescriptionMap.put("двад", "Описание слова 2");
-        wordDescriptionMap.put("трит", "Описание слова 3");
+        wordDescriptionMap.put("автомобиль", "Транспортное средство для перевозки людей и грузов.");
+        wordDescriptionMap.put("компьютер", "Электронное устройство для обработки данных.");
+        wordDescriptionMap.put("пианино", "Музыкальный инструмент с клавишами.");
+        wordDescriptionMap.put("телефон", "Устройство для связи на расстоянии.");
+        wordDescriptionMap.put("банан", "Плод тропического растения.");
+        wordDescriptionMap.put("пицца", "Блюдо итальянской кухни с тестом и начинкой.");
+        wordDescriptionMap.put("книга", "Печатное издание с текстом и/или иллюстрациями.");
+        wordDescriptionMap.put("солнце", "Звезда, освещающая Землю.");
+        wordDescriptionMap.put("котенок", "Маленький кот или кошка.");
+        wordDescriptionMap.put("дракон", "Легендарное существо с огненным дыханием.");
         return getRandomWord(wordDescriptionMap);
     }
 
