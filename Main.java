@@ -3,23 +3,11 @@ import java.util.*;
 public class Main {
 
     private static int attemptsLeft;
-
     private static Set<Character> guessedLetters;
-
     private static String secretWord;
-
     private static String wordDescription;
-
-    public static char guess;
-
-    public static int counter = 0;
-
-    public static String encryptedWord;
-
-    static {
-        initializeGame();
-        encryptedWord = wordEncryption().toString();
-    }
+    private static int counter = 0;
+    private static StringBuilder encryptedWord;
 
     public static void main(String[] args) {
         startGame();
@@ -29,9 +17,9 @@ public class Main {
         // Создаем HashMap для хранения слов и их описаний
         HashMap<String, String> wordDescriptionMap = new HashMap<>();
         // Заполняем HashMap словами и их описаниями
-        wordDescriptionMap.put("один", "Описание слова 1");
-        wordDescriptionMap.put("два", "Описание слова 2");
-        wordDescriptionMap.put("три", "Описание слова 3");
+        wordDescriptionMap.put("одино", "Описание слова 1");
+        wordDescriptionMap.put("двад", "Описание слова 2");
+        wordDescriptionMap.put("трит", "Описание слова 3");
         return getRandomWord(wordDescriptionMap);
     }
 
@@ -73,9 +61,10 @@ public class Main {
         String[] wordAndDescription = wordStorage();
         secretWord = wordAndDescription[0]; // само слово
         wordDescription = wordAndDescription[1]; // описание слова
-        wordEncryption(); // шифр
+        encryptedWord = wordEncryption(); // шифр
         attemptsLeft = 5; // Установите желаемое количество попыток
         guessedLetters = new HashSet<>(); // хранилище для букв, которые были введены пользователем
+        counter = 0; // сбрасываем счетчик
     }
 
     public static StringBuilder wordEncryption(){
@@ -90,11 +79,11 @@ public class Main {
         initializeGame();
         System.out.println("Добро пожаловать в игру 'Виселица'!'");
         Scanner tryingToGuessTheWord = new Scanner(System.in);
-        System.out.println(wordEncryption());
+        System.out.println(encryptedWord);
         while(attemptsLeft > 0){
             System.out.println("У вас есть " + attemptsLeft + " попыток отгадать слово");
             System.out.println(wordDescription);
-            guess = tryingToGuessTheWord.next().charAt(0);
+            char guess = tryingToGuessTheWord.next().charAt(0);
             if(!Character.isLetter(guess)){
                 System.out.println("Пожалуйста, введите букву");
                 continue;
@@ -107,12 +96,12 @@ public class Main {
             }
             if (wordConceal().containsKey(guess)){
                 System.out.println("буква есть");
-                for(; counter < encryptedWord.length();){
-                    encryptedWord = revealWord(encryptedWord, secretWord.charAt(counter),counter);
-                    System.out.println(encryptedWord);
-                    break;
+                for (int i = 0; i < secretWord.length(); i++) {
+                    if (secretWord.charAt(i) == guess) {
+                        encryptedWord = new StringBuilder(revealWord(encryptedWord.toString(), guess, i));
+                    }
                 }
-                counter++;
+                System.out.println(encryptedWord);
             }else{
                 System.out.println("буквы нет");
                 attemptsLeft--;
@@ -129,7 +118,7 @@ public class Main {
     public static boolean isWordGuessed(){
         for(int i = 0; i < secretWord.length(); i++){
             if(!guessedLetters.contains(secretWord.charAt(i))){
-               return false;
+                return false;
             }
         }
         return true;
